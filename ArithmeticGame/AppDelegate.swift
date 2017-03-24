@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,7 +21,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         let navgiationController = UINavigationController(rootViewController: HomeViewController())
         window?.rootViewController = navgiationController
+        FIRApp.configure()
+        GADMobileAds.configure(withApplicationID: "ca-app-pub-8818309556860374~6482488042")
+        UINavigationBar.appearance().barTintColor = UIColor.mainBlue
+        // get rid of black bar underneath navbar
+        UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         
+        application.statusBarStyle = .lightContent
+        let statusBarBackgroundView = UIView()
+        statusBarBackgroundView.alpha = 0.8
+        statusBarBackgroundView.backgroundColor = UIColor.darkBlue
+        window?.addSubview(statusBarBackgroundView)
+        window?.addConstraintsWithFormat("H:|[v0]|", views: statusBarBackgroundView)
+        window?.addConstraintsWithFormat("V:|[v0(20)]", views: statusBarBackgroundView)
         
         return true
     }

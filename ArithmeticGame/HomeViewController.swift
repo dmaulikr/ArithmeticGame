@@ -17,11 +17,10 @@ class HomeViewController: UIViewController {
     var increaseCountdowntimer = Timer()
     var decreaseCountdowntimer = Timer()
     var effectTimer:Timer?
-    var countdowntimer:Timer?
+    var countdowntimer: Timer?
     var quarterHeight:CGFloat = 0
     var frameWidth:CGFloat = 0
     let numberFormatter = NumberFormatter()
-    var level = 0
     var answer = 1
     var additionalNumber = 0
     var isAddAdditionalNumber = false
@@ -32,21 +31,63 @@ class HomeViewController: UIViewController {
     let topic = Topic.share
     var victoryMusicPlayer:AVAudioPlayer = AVAudioPlayer()
     var failMusicPlayer:AVAudioPlayer = AVAudioPlayer()
+    var tenSecPlayer:AVAudioPlayer = AVAudioPlayer()
+    var fiveSecPlayer:AVAudioPlayer = AVAudioPlayer()
+    var addUnit = 0
+    var addSymbol = ""
     
+    var audioSession: AVAudioSession!
+    var challengeNumber:Int {
+        get {
+        return UserDefaults.clickNumber()
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "clickNumber")
+        }
+    }
+    var isNeedAddNumber:Bool {
+        get {
+            return UserDefaults.isNeedAddNumber()
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "isNeedAddNumber")
+        }
+    }
     
-    
+    var level:Int {
+        get {
+            return UserDefaults.level()
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "level")
+        }
+    }
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        reloadAd()
         let victoryPath = Bundle.main.path(forResource: "correct", ofType: "mp3")
         let failPath = Bundle.main.path(forResource: "incorrect", ofType: "mp3")
+        let tenSecPath = Bundle.main.path(forResource: "10sec", ofType: "mp3")
+        let fiveSecPath = Bundle.main.path(forResource: "5sec", ofType: "aif")
+        audioSession = AVAudioSession.sharedInstance()
+
         do {
+            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with:.defaultToSpeaker)
+            try audioSession.setActive(true)
             victoryMusicPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: victoryPath!))
             victoryMusicPlayer.prepareToPlay()
             failMusicPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: failPath!))
             failMusicPlayer.prepareToPlay()
+            tenSecPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: tenSecPath!))
+            tenSecPlayer.prepareToPlay()
+            fiveSecPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: fiveSecPath!))
+            fiveSecPlayer.numberOfLoops = 2
+            fiveSecPlayer.volume = 0.5
+            fiveSecPlayer.prepareToPlay()
+            
         } catch {
             print  (Error.self)
         }
@@ -58,19 +99,50 @@ class HomeViewController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
-        
+        setupTitleView()
+        setupBackgroundView()
         setupTimerView()
         setupCountingView()
         setupMenuVIew()
         setupClickView()
-        
-
     }
+    lazy var titleView:UIView = {
+        let view = UIView()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(restoreNumber)))
+        view.isUserInteractionEnabled = true
+        view.backgroundColor = UIColor.mainBlue
+        return view
+    }()
+    lazy var challengeLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Challenge \(self.challengeNumber)/10"
+        label.textColor = UIColor.white
+        if self.challengeNumber >= 10 && self.isNeedAddNumber {
+          label.text = "Tap here to restore challenge"
+        }
+        return label
+    }()
+    func setupTitleView() {
+        
+        titleView.addSubview(challengeLabel)
+        challengeLabel.anchorCenterSuperview()
+        titleView.anchor(nil, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 200, heightConstant: 40)
+        titleView.anchorCenterSuperview()
+        navigationItem.titleView = titleView
+    }
+    
+    func restoreNumber() {
+        if challengeNumber >= 10 {
+            playVideo()
+        }
+        
+    }
+    
     let timerBackgroundView = UIView()
     let titleLabel:UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 30)
-        label.textColor = UIColor.white
+        label.textColor = UIColor.black
         label.numberOfLines = 0
         label.textAlignment = .center
         label.text = "Timer"
@@ -80,27 +152,56 @@ class HomeViewController: UIViewController {
     let counterLabel:UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 60)
-        label.textColor = UIColor.white
+        label.textColor = UIColor.black
         label.textAlignment = .center
         label.text = "15.0"
         return label
     }()
-
+    let bestLabel:StrokeLevelLabel = {
+        let label = StrokeLevelLabel(6)
+        label.text = "Best  \(UserDefaults.bestScore()/3+1)-\(UserDefaults.bestScore() % 3 + 1)"
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = UIColor.white
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    
     func setupTimerView() {
-        timerBackgroundView.backgroundColor = UIColor.mainBlue
+        timerBackgroundView.backgroundColor = UIColor.clear
         view.addSubview(timerBackgroundView)
+        timerBackgroundView.addSubview(bestLabel)
         timerBackgroundView.addSubview(titleLabel)
         timerBackgroundView.addSubview(counterLabel)
+        bestLabel.anchor(view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 100, heightConstant: 40)
         timerBackgroundView.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3 + 70)
         titleLabel.anchor(timerBackgroundView.topAnchor, left: timerBackgroundView.leftAnchor, bottom: nil, right: timerBackgroundView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 40)
         counterLabel.anchor(titleLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 200, heightConstant: quarterHeight/3)
         counterLabel.anchorCenterXToSuperview()
     }
     
-    let levelLabel:UILabel = {
-        let label = UILabel()
-        label.font = UIFont(name: "MinecrafterAlt", size: 30)
-        label.text = "Level 1"
+    let backgroundImageView:UIImageView = {
+        let backImageView = UIImageView()
+        backImageView.image = #imageLiteral(resourceName: "background")
+        backImageView.contentMode = .scaleAspectFill
+        backImageView.alpha = 0.3
+        return backImageView
+    }()
+    
+    
+    func setupBackgroundView(){
+        
+        view.addSubview(backgroundImageView)
+        backgroundImageView.anchor(view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+    }
+    
+    
+    lazy var levelLabel:StrokeLevelLabel = {
+        let label = StrokeLevelLabel(10)
+        label.font = UIFont.boldSystemFont(ofSize: 25)
+        label.text = "Level \(self.level/3+1)-\(self.level % 3 + 1)"
+        label.textColor = UIColor.white
         label.textAlignment = .center
         return label
     }()
@@ -111,8 +212,8 @@ class HomeViewController: UIViewController {
         return iv
     }()
     
-    let countingLabel:StrokeLabel = {
-        let label = StrokeLabel()
+    let countingLabel:UILabel = {
+        let label = UILabel()
         label.textColor = UIColor.buyRed
         label.font = UIFont.boldSystemFont(ofSize: 40)
         label.textAlignment = .center
@@ -128,7 +229,7 @@ class HomeViewController: UIViewController {
     
     let equationLabel:StrokeLabel = {
         let label = StrokeLabel()
-        label.text = "( 4 + 5 ) ＊ 3 "
+        label.text = "a + b - c = ???"
         label.textColor = UIColor.buyRed
         label.font = UIFont.boldSystemFont(ofSize: 25)
         label.textAlignment = .left
@@ -142,9 +243,6 @@ class HomeViewController: UIViewController {
         view.addSubview(equationLabel)
         view.addSubview(countingImageView)
         view.addSubview(countingLabel)
-        
-//        timeTitleLabel.anchor(titleLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 5, bottomConstant: 0, rightConstant: 0, widthConstant: frameWidth/3, heightConstant: quarterHeight/3)
-//        counterLabel.anchor(timeTitleLabel.topAnchor, left: timeTitleLabel.rightAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 5, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
         
         
         levelLabel.anchor(timerBackgroundView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
@@ -233,11 +331,23 @@ class HomeViewController: UIViewController {
         return iv
     }()
     
+    let hintLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Tap or Press the + - button to adjust the number"
+        label.textColor = UIColor.darkGray
+        label.font = UIFont.systemFont(ofSize: 12)
+        return label
+    }()
+    
+    
     func setupClickView() {
         view.addSubview(increaseView)
         view.addSubview(decreaseView)
+        view.addSubview(hintLabel)
         increaseView.anchor(nil , left: view.leftAnchor, bottom: view.bottomAnchor  , right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 30, rightConstant: 0, widthConstant: frameWidth/2-20, heightConstant: 60)
         decreaseView.anchor(nil, left: nil, bottom: increaseView.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: frameWidth/2-20, heightConstant: 60)
+        hintLabel.anchor(nil, left: nil, bottom: view.bottomAnchor, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 5, rightConstant: 0, widthConstant: 0, heightConstant: 20)
+        hintLabel.anchorCenterXToSuperview()
     }
     
     
@@ -278,8 +388,8 @@ class HomeViewController: UIViewController {
     }
     
     func updateNumber(){
-        countingLabel.text = "\(currentNumber)"
-   //     counterLabel.text = "\(countdownTime)"
+           self.countingLabel.text = "\(self.currentNumber)"
+        //     counterLabel.text = "\(countdownTime)"
         
     }
     

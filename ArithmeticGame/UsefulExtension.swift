@@ -113,6 +113,9 @@ extension UIColor {
     static let guessGray = {
         return UIColor(r: 116, g: 145, b: 154)
     }()
+    static let levelPink = {
+        return UIColor(r: 251, g: 70, b: 165)
+    }()
 
     
     
@@ -221,6 +224,27 @@ extension UserDefaults {
         }
         return 0
     }
+    static func level() -> Int {
+        if let level = UserDefaults.standard.object(forKey: "level") as? Int {
+            return level
+        }
+        return 0
+    }
+    static func isNeedAddNumber() -> Bool {
+        if let isNeedAddNumber = UserDefaults.standard.object(forKey: "isNeedAddNumber") as? Bool {
+            return isNeedAddNumber
+        }
+        return true
+    }
+    static func bestScore() -> Int {
+        if let bestScore = UserDefaults.standard.object(forKey: "bestScore") as? Int {
+            return bestScore
+        }
+        return 0
+    }
+
+    
+    
     static func numberOfQInToday() -> Int {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return 0}
         if let number = UserDefaults.standard.object(forKey: uid + Date.returnTodayString()) as? Int {
@@ -343,6 +367,36 @@ class StrokeLabel: UILabel {
         c.setTextDrawingMode(.stroke)
         
         self.textColor = UIColor.adoptGreen
+        super.drawText(in: rect)
+        
+        c.setTextDrawingMode(.fill)
+        self.textColor = textColor
+        super.drawText(in: rect)
+    }
+    
+    
+}
+class StrokeLevelLabel: UILabel {
+    
+       var linewidth:CGFloat
+       init(_ width: CGFloat) {
+       self.linewidth = width
+       super.init(frame: .zero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override func drawText(in rect: CGRect) {
+        let textColor = self.textColor
+        
+        let c = UIGraphicsGetCurrentContext()!
+        
+        c.setLineWidth(linewidth)
+        c.setLineJoin(.round)
+        c.setTextDrawingMode(.stroke)
+        
+        self.textColor = UIColor.levelPink
         super.drawText(in: rect)
         
         c.setTextDrawingMode(.fill)
