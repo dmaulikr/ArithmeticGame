@@ -14,6 +14,7 @@ import AVFoundation
 extension HomeViewController {
     
     func gameStart(){
+        
         if isNeedAddNumber { challengeNumber += 1}
         if challengeNumber > 10 {
             let alertController = UIAlertController(title: "running out of challenge times", message: "Please tap top title watch Ads to restore or buy Pro", preferredStyle: .alert)
@@ -22,6 +23,7 @@ extension HomeViewController {
             self.present(alertController, animated: true, completion: nil)
             return
         }
+      isGamePlaying = true
       isEnbaleStartGame(false)
       initalGameStatus()
       let topicDict = topic.selectLevel(level/3+1)
@@ -35,6 +37,7 @@ extension HomeViewController {
     
     func initalGameStatus(){
         isEnbaleAdjustNumber(true)
+        hideAnswerLabel.isHidden = true
         challengeLabel.text = "Challenge \(challengeNumber)/10"
         currentNumber = 0
         countdownTime = 15.0
@@ -63,10 +66,12 @@ extension HomeViewController {
         effectTimer?.invalidate()
         }
         if ( counterLabel.text == "0.0"){
+            isGamePlaying = false
             countingLabel.isHidden = false
             isEnbaleAdjustNumber(false)
             increaseCountdowntimer.invalidate()
             decreaseCountdowntimer.invalidate()
+            tenSecPlayer.stop()
             fiveSecPlayer.stop()
             countdowntimer?.invalidate()
             effectTimer?.invalidate()
@@ -81,9 +86,10 @@ extension HomeViewController {
     func checkSound() {
         if isNeedSound {
             if countdownTime > 5 && !tenSecPlayer.isPlaying {
+                tenSecPlayer.volume = 1
                 tenSecPlayer.play()
             } else if countdownTime < 5 && !fiveSecPlayer.isPlaying{
-                tenSecPlayer.stop()
+                tenSecPlayer.volume = 0
                 fiveSecPlayer.play()
             } else {
                 return
@@ -109,7 +115,6 @@ extension HomeViewController {
     
     
     func judgeIsCorrect() {
-        
         if isAddAdditionalNumber {
            answer = answer + additionalNumber
         }
@@ -134,6 +139,7 @@ extension HomeViewController {
                 startButton.setTitle("Restart", for: .normal)
                 challengeLabel.text = "Touch to restore challenge"
                 level = 0
+                restoreTreasure()
             }
             print ("fail")
         }
@@ -160,8 +166,8 @@ extension HomeViewController {
         addUnit = random1 == 0 ? 1 : -1
         addSymbol = random1 == 0 ? "+" : ""
         isAddAdditionalNumber = true
-        let random:Double = Double(Int(arc4random_uniform(UInt32(6)))+5) / 10.0
-         effectTimer = Timer.scheduledTimer(timeInterval: random, target: self, selector: #selector(addMovingNumber), userInfo: nil, repeats: true)
+        randomEffectClock = Double(Int(arc4random_uniform(UInt32(6)))+5) / 10.0
+         effectTimer = Timer.scheduledTimer(timeInterval: randomEffectClock, target: self, selector: #selector(addMovingNumber), userInfo: nil, repeats: true)
         }
     }
     func hiddenCountingLabel() {
@@ -177,5 +183,44 @@ extension HomeViewController {
         equationLabel.text = "\(tempText) \(addSymbol)\(additionalNumber)"
     }
     
+    func useClock() {
+        if isGamePlaying && isClockAvailable {
+            isClockAvailable = false
+            countdownTime += 3
+            clockButton.isEnabled = false
+            clockButton.alpha = 0.5
+        }
+    }
+    func useHint() {
+        if isGamePlaying && isHintAvailable {
+            calculateHideAnswer()
+            hideAnswerLabel.isHidden = false
+            isHintAvailable = false
+            hintButton.isEnabled = false
+            hintButton.alpha = 0.5
+        }
+    }
+    
+    
+    
+    
+    func restoreTreasure() {
+        isClockAvailable = true
+        isHintAvailable = true
+        clockButton.isEnabled = true
+        clockButton.alpha = 1.0
+        hintButton.isEnabled = true
+        hintButton.alpha = 1.0
+    }
+    func calculateHideAnswer() {
+        var finalAnswer = answer
+        if level % 3 == 2 {
+            finalAnswer = finalAnswer + addUnit * Int(floor(12/randomEffectClock))
+        }
+        hideAnswer = "\(finalAnswer)"
+        hideAnswer.characters.removeLast()
+        hideAnswer = hideAnswer + "?"
+        hideAnswerLabel.text = "Hint : \(hideAnswer)"
+    }
     
 }

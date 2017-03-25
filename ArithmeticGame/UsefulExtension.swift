@@ -242,7 +242,18 @@ extension UserDefaults {
         }
         return 0
     }
-
+    static func isClockAvailable() -> Bool {
+        if let isClockAvailable = UserDefaults.standard.object(forKey: "isClockAvailable") as? Bool {
+            return isClockAvailable
+        }
+        return true
+    }
+    static func isHintAvailable() -> Bool {
+        if let isHintAvailable = UserDefaults.standard.object(forKey: "isHintAvailable") as? Bool {
+            return isHintAvailable
+        }
+        return true
+    }
     
     
     static func numberOfQInToday() -> Int {

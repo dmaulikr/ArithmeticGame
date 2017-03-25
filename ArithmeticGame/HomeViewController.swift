@@ -27,6 +27,7 @@ class HomeViewController: UIViewController {
     var tempText = ""
     var isHidden = false
     var isNeedSound = true
+    var isGamePlaying = false 
     var countdownTime = 15.0
     let topic = Topic.share
     var victoryMusicPlayer:AVAudioPlayer = AVAudioPlayer()
@@ -35,7 +36,8 @@ class HomeViewController: UIViewController {
     var fiveSecPlayer:AVAudioPlayer = AVAudioPlayer()
     var addUnit = 0
     var addSymbol = ""
-    
+    var hideAnswer = ""
+    var randomEffectClock = 0.0
     var audioSession: AVAudioSession!
     var challengeNumber:Int {
         get {
@@ -62,6 +64,23 @@ class HomeViewController: UIViewController {
             UserDefaults.standard.set(newValue, forKey: "level")
         }
     }
+    var isClockAvailable:Bool {
+        get {
+            return UserDefaults.isClockAvailable()
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "isClockAvailable")
+        }
+    }
+    var isHintAvailable:Bool {
+        get {
+            return UserDefaults.isHintAvailable()
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "isHintAvailable")
+        }
+    }
+    
     
     
     
@@ -135,7 +154,6 @@ class HomeViewController: UIViewController {
         if challengeNumber >= 10 {
             playVideo()
         }
-        
     }
     
     let timerBackgroundView = UIView()
@@ -175,7 +193,7 @@ class HomeViewController: UIViewController {
         timerBackgroundView.addSubview(titleLabel)
         timerBackgroundView.addSubview(counterLabel)
         bestLabel.anchor(view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 100, heightConstant: 40)
-        timerBackgroundView.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3 + 70)
+        timerBackgroundView.anchor(view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3 + 40)
         titleLabel.anchor(timerBackgroundView.topAnchor, left: timerBackgroundView.leftAnchor, bottom: nil, right: timerBackgroundView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 40)
         counterLabel.anchor(titleLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 200, heightConstant: quarterHeight/3)
         counterLabel.anchorCenterXToSuperview()
@@ -237,21 +255,31 @@ class HomeViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
+    let hideAnswerLabel:UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.textColor = UIColor.buyRed
+        return label
+    }()
+    
     func setupCountingView(){
         view.addSubview(levelLabel)
         view.addSubview(equationImageView)
         view.addSubview(equationLabel)
         view.addSubview(countingImageView)
         view.addSubview(countingLabel)
+        view.addSubview(hideAnswerLabel)
         
-        
-        levelLabel.anchor(timerBackgroundView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
+        levelLabel.anchor(timerBackgroundView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 20, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
         levelLabel.anchorCenterXToSuperview()
         equationImageView.anchor(levelLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: frameWidth/3, heightConstant: quarterHeight/3)
         equationLabel.anchor(equationImageView.topAnchor, left: equationImageView.rightAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
         countingImageView.anchor(equationImageView.bottomAnchor, left: equationImageView.leftAnchor, bottom: nil, right: equationImageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
         countingLabel.anchor(equationLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: quarterHeight/3)
         countingLabel.anchorCenterXToSuperview()
+        hideAnswerLabel.anchor(countingLabel.topAnchor, left: countingLabel.rightAnchor, bottom: countingLabel.bottomAnchor, right: nil, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 0, widthConstant: 70, heightConstant: 0)
+        
     }
     
     lazy var startButton:UIButton = {
@@ -282,15 +310,36 @@ class HomeViewController: UIViewController {
 
         return btn
     }()
-    
+    lazy var clockButton:UIButton = {
+        let btn = UIButton()
+        btn.setImage(#imageLiteral(resourceName: "clock"), for: .normal)
+        btn.addTarget(self, action: #selector(useClock), for: .touchUpInside)
+        btn.alpha =  self.isClockAvailable ? 1 : 0.5
+        btn.isEnabled = self.isClockAvailable
+        return btn
+    }()
+    lazy var hintButton:UIButton = {
+        let btn = UIButton()
+        btn.setImage(#imageLiteral(resourceName: "hint"), for: .normal)
+        btn.addTarget(self, action: #selector(useHint), for: .touchUpInside)
+        btn.alpha =  self.isHintAvailable ? 1 : 0.5
+        btn.isEnabled = self.isHintAvailable
+        return btn
+    }()
     
     func setupMenuVIew() {
         view.addSubview(startButton)
         view.addSubview(soundButton)
-        startButton.anchor(countingLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 20, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 200, heightConstant: quarterHeight/3)
+        view.addSubview(clockButton)
+        view.addSubview(hintButton)
+        startButton.anchor(countingLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 20, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: frameWidth/2 , heightConstant: quarterHeight/3 - 10)
         startButton.anchorCenterXToSuperview()
-        soundButton.anchor(startButton.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 200, heightConstant: quarterHeight/3)
+        soundButton.anchor(startButton.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: frameWidth/2  , heightConstant: quarterHeight/3 - 10)
         soundButton.anchorCenterXToSuperview()
+        clockButton.anchor(soundButton.bottomAnchor, left: nil, bottom: nil, right: view.centerXAnchor, topConstant: 20, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: frameWidth/7, heightConstant: quarterHeight/3 )
+        hintButton.anchor(clockButton.topAnchor, left: view.centerXAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: frameWidth/7, heightConstant: quarterHeight/3 )
+        
+        
     }
     
    
@@ -299,8 +348,6 @@ class HomeViewController: UIViewController {
         soundButton.setTitle(isNeedSound ? "Sound on" : "Sound off", for: .normal)
         
     }
-    
-    
     
     lazy var increaseView:UIImageView = {
         let iv = UIImageView()
@@ -344,8 +391,8 @@ class HomeViewController: UIViewController {
         view.addSubview(increaseView)
         view.addSubview(decreaseView)
         view.addSubview(hintLabel)
-        increaseView.anchor(nil , left: view.leftAnchor, bottom: view.bottomAnchor  , right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 30, rightConstant: 0, widthConstant: frameWidth/2-20, heightConstant: 60)
-        decreaseView.anchor(nil, left: nil, bottom: increaseView.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: frameWidth/2-20, heightConstant: 60)
+        increaseView.anchor(nil , left: view.leftAnchor, bottom: view.bottomAnchor  , right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 30, rightConstant: 0, widthConstant: frameWidth/2-20, heightConstant: quarterHeight/2-10)
+        decreaseView.anchor(nil, left: nil, bottom: increaseView.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: frameWidth/2-20, heightConstant: quarterHeight/2-10)
         hintLabel.anchor(nil, left: nil, bottom: view.bottomAnchor, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 5, rightConstant: 0, widthConstant: 0, heightConstant: 20)
         hintLabel.anchorCenterXToSuperview()
     }

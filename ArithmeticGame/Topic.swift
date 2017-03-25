@@ -57,7 +57,7 @@ struct Topic {
     }
     // a*b
     func makeLevelThreeTopic() -> [String:Int] {
-        let random1 = Int(arc4random_uniform(UInt32(11)))+10
+        let random1 = Int(arc4random_uniform(UInt32(31)))+10
         let random2 = Int(arc4random_uniform(UInt32(10)))+1
         let equation = "\(random1) ＊ \(random2)"
         let answer = random1 * random2
@@ -81,7 +81,7 @@ struct Topic {
     
     // (a*b)±c
     func makeLevelSixTopic() -> [String:Int] {
-        let random1 = Int(arc4random_uniform(UInt32(10)))+1
+        let random1 = Int(arc4random_uniform(UInt32(30)))+1
         let random2 = Int(arc4random_uniform(UInt32(10)))+1
         let random3 = Int(arc4random_uniform(UInt32(random1*random2)))
         let (symbol,randomOperator) = self.randomOperator()
@@ -110,7 +110,7 @@ struct Topic {
     }
     //(a*b)±(c/d)
     func makeLevelNineTopic() -> [String:Int] {
-        let random1 = Int(arc4random_uniform(UInt32(11)))+10
+        let random1 = Int(arc4random_uniform(UInt32(31)))+10
         let random2 = Int(arc4random_uniform(UInt32(10)))+1
         let divideDict = self.makeDivide()
         let (symbol,randomOperator) = self.randomOperator()

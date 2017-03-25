@@ -73,8 +73,8 @@
 			isa = PBXGroup;
 			children = (
 				61B78FC11E8146C600343832 /* HomeViewController.swift */,
-				614B475B1E85714900E4B362 /* HandleRewardAds.swift */,
 				6137A4141E83ACBB0067536F /* HandleGameLogic.swift */,
+				614B475B1E85714900E4B362 /* HandleRewardAds.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
