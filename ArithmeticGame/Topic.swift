@@ -120,8 +120,8 @@ struct Topic {
     }
     //(a*b)±(c/d)
     func makeLevelTenTopic() -> [String:Int] {
-        let random1 = Int(arc4random_uniform(UInt32(11)))+10
-        let random2 = Int(arc4random_uniform(UInt32(11)))+10
+        let random1 = Int(arc4random_uniform(UInt32(21)))+10
+        let random2 = Int(arc4random_uniform(UInt32(21)))+10
         let divideDict = self.makeDivide()
         let (symbol,randomOperator) = self.randomOperator()
         let equation = "(\(random1) * \(random2)) \(symbol) \(divideDict.keys.first!)"

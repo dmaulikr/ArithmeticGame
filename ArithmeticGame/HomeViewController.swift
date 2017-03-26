@@ -9,10 +9,11 @@
 import UIKit
 import LBTAComponents
 import AVFoundation
+import StoreKit
 
 class HomeViewController: UIViewController {
 
-    
+    var products = [SKProduct]()
     var currentNumber = 0
     var increaseCountdowntimer = Timer()
     var decreaseCountdowntimer = Timer()
@@ -115,8 +116,24 @@ class HomeViewController: UIViewController {
         quarterHeight = view.frame.height/4
         frameWidth = view.frame.width
         navigationController?.navigationBar.isTranslucent = false
+        
+        let buyProBarButtonItem = UIBarButtonItem(title: "Pro", style: .plain, target: self, action: #selector(updatePro))
+         buyProBarButtonItem.setTitleTextAttributes([NSForegroundColorAttributeName:UIColor.white], for: .normal)
+        navigationItem.rightBarButtonItems = [buyProBarButtonItem]
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(HomeViewController.handlePurchaseNotification),
+        name: NSNotification.Name(rawValue: IAPHelper.IAPHelperPurchaseNotification),object: nil)
+        checkPro()
     }
-    
+    func handlePurchaseNotification(_ notification: Notification) {
+        guard let productID = notification.object as? String else { return }
+        
+        for (_, product) in products.enumerated() {
+            guard product.productIdentifier == productID else { continue }
+            
+        }
+    }
     override func viewWillLayoutSubviews() {
         setupTitleView()
         setupBackgroundView()
@@ -136,7 +153,7 @@ class HomeViewController: UIViewController {
         let label = UILabel()
         label.text = "Challenge \(self.challengeNumber)/10"
         label.textColor = UIColor.white
-        if self.challengeNumber >= 10 && self.isNeedAddNumber {
+        if self.challengeNumber >= 10 && self.isNeedAddNumber && !UserDefaults.checkPro(){
           label.text = "Tap here to restore challenge"
         }
         return label

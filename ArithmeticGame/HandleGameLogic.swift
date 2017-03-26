@@ -14,15 +14,16 @@ import AVFoundation
 extension HomeViewController {
     
     func gameStart(){
-        
         if isNeedAddNumber { challengeNumber += 1}
-        if challengeNumber > 10 {
+        if challengeNumber > 10  && !UserDefaults.checkPro() {
             let alertController = UIAlertController(title: "running out of challenge times", message: "Please tap top title watch Ads to restore or buy Pro", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
             alertController.addAction(okAction)
             self.present(alertController, animated: true, completion: nil)
             return
         }
+        if challengeNumber > 10  && UserDefaults.checkPro() { challengeNumber = 1}
+            
       isGamePlaying = true
       isEnbaleStartGame(false)
       initalGameStatus()
@@ -137,7 +138,7 @@ extension HomeViewController {
             startButton.setTitle("Continue", for: .normal)
             if challengeNumber >= 10 {
                 startButton.setTitle("Restart", for: .normal)
-                challengeLabel.text = "Touch to restore challenge"
+                challengeLabel.text = UserDefaults.checkPro() ? "Challenge 0/10" : "Touch to restore challenge"
                 level = 0
                 restoreTreasure()
             }

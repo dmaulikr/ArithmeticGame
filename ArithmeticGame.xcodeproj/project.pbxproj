@@ -14,6 +14,10 @@
 		6137A41D1E841F7B0067536F /* correct.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6137A41C1E841F7B0067536F /* correct.mp3 */; };
 		613C83B11E853C96001F0B78 /* 5sec.aif in Resources */ = {isa = PBXBuildFile; fileRef = 613C83B01E853C96001F0B78 /* 5sec.aif */; };
 		613C83B31E853C9D001F0B78 /* 10sec.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 613C83B21E853C9D001F0B78 /* 10sec.mp3 */; };
+		614B00781E8790C300001246 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614B00771E8790C300001246 /* IAPHelper.swift */; };
+		614B007A1E87915B00001246 /* ArithmeticGamePro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614B00791E87915B00001246 /* ArithmeticGamePro.swift */; };
+		614B007C1E8791F000001246 /* HandleIAP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614B007B1E8791F000001246 /* HandleIAP.swift */; };
+		614B00821E879E9500001246 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 614B00841E879E9500001246 /* InfoPlist.strings */; };
 		614B475A1E856EF900E4B362 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 614B47591E856EF900E4B362 /* GoogleService-Info.plist */; };
 		614B475C1E85714900E4B362 /* HandleRewardAds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614B475B1E85714900E4B362 /* HandleRewardAds.swift */; };
 		61B78FC01E8146C600343832 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B78FBF1E8146C600343832 /* AppDelegate.swift */; };
@@ -34,6 +38,17 @@
 		6137A41C1E841F7B0067536F /* correct.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = correct.mp3; sourceTree = "<group>"; };
 		613C83B01E853C96001F0B78 /* 5sec.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = 5sec.aif; sourceTree = "<group>"; };
 		613C83B21E853C9D001F0B78 /* 10sec.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 10sec.mp3; sourceTree = "<group>"; };
+		614B00771E8790C300001246 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
+		614B00791E87915B00001246 /* ArithmeticGamePro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArithmeticGamePro.swift; sourceTree = "<group>"; };
+		614B007B1E8791F000001246 /* HandleIAP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleIAP.swift; sourceTree = "<group>"; };
+		614B007F1E879E4E00001246 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		614B00801E879E5500001246 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		614B00811E879E5B00001246 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		614B00831E879E9500001246 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		614B00871E879E9D00001246 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		614B00881E879F2A00001246 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		614B00891E87A31C00001246 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		614B008A1E87A39E00001246 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		614B47591E856EF900E4B362 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		614B475B1E85714900E4B362 /* HandleRewardAds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleRewardAds.swift; sourceTree = "<group>"; };
 		61B78FBC1E8146C600343832 /* ArithmeticGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArithmeticGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,6 +89,7 @@
 			children = (
 				61B78FC11E8146C600343832 /* HomeViewController.swift */,
 				6137A4141E83ACBB0067536F /* HandleGameLogic.swift */,
+				614B007B1E8791F000001246 /* HandleIAP.swift */,
 				614B475B1E85714900E4B362 /* HandleRewardAds.swift */,
 			);
 			name = ViewController;
@@ -83,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				6137A4171E83B3F80067536F /* Topic.swift */,
+				614B00791E87915B00001246 /* ArithmeticGamePro.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -113,8 +130,10 @@
 				6137A4191E83B4020067536F /* Model */,
 				61B78FCB1E8146C600343832 /* Info.plist */,
 				61B78FD81E81483900343832 /* Minecrafter.Alt.ttf */,
+				614B00841E879E9500001246 /* InfoPlist.strings */,
 				61B78FDA1E82D00D00343832 /* UsefulExtension.swift */,
 				61B78FC81E8146C600343832 /* LaunchScreen.storyboard */,
+				614B00771E8790C300001246 /* IAPHelper.swift */,
 				61B78FC61E8146C600343832 /* Assets.xcassets */,
 				614B47591E856EF900E4B362 /* GoogleService-Info.plist */,
 				61B78FD71E81481400343832 /* Resources */,
@@ -189,6 +208,9 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 61B78FB31E8146C600343832;
 			productRefGroup = 61B78FBD1E8146C600343832 /* Products */;
@@ -214,6 +236,7 @@
 				61B78FC71E8146C600343832 /* Assets.xcassets in Resources */,
 				61B78FD51E81480C00343832 /* click.jpg in Resources */,
 				6137A41D1E841F7B0067536F /* correct.mp3 in Resources */,
+				614B00821E879E9500001246 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,11 +295,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				614B007C1E8791F000001246 /* HandleIAP.swift in Sources */,
+				614B007A1E87915B00001246 /* ArithmeticGamePro.swift in Sources */,
 				6137A4151E83ACBB0067536F /* HandleGameLogic.swift in Sources */,
 				6137A4181E83B3F80067536F /* Topic.swift in Sources */,
 				61B78FC21E8146C600343832 /* HomeViewController.swift in Sources */,
 				614B475C1E85714900E4B362 /* HandleRewardAds.swift in Sources */,
 				61B78FC01E8146C600343832 /* AppDelegate.swift in Sources */,
+				614B00781E8790C300001246 /* IAPHelper.swift in Sources */,
 				61B78FDB1E82D00D00343832 /* UsefulExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,10 +310,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		614B00841E879E9500001246 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				614B00831E879E9500001246 /* en */,
+				614B00871E879E9D00001246 /* zh-Hant */,
+				614B00881E879F2A00001246 /* Base */,
+				614B00891E87A31C00001246 /* zh-Hans */,
+				614B008A1E87A39E00001246 /* ja */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		61B78FC81E8146C600343832 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				61B78FC91E8146C600343832 /* Base */,
+				614B007F1E879E4E00001246 /* ja */,
+				614B00801E879E5500001246 /* zh-Hans */,
+				614B00811E879E5B00001246 /* zh-Hant */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -299,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -349,6 +391,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";

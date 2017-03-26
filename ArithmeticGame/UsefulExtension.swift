@@ -254,7 +254,12 @@ extension UserDefaults {
         }
         return true
     }
-    
+    static func checkPro() -> Bool {
+        if let checkPro = UserDefaults.standard.object(forKey: "checkPro") as? Bool {
+            return checkPro
+        }
+        return false
+    }
     
     static func numberOfQInToday() -> Int {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return 0}
